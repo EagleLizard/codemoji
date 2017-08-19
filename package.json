@@ -1,0 +1,30 @@
+{
+  "name": "codemoji",
+  "version": "0.0.1",
+  "description": "Fully fledged, flexible package for generating different emoji types",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EagleLizard/codemoji.git"
+  },
+  "keywords": [
+    "emoji",
+    "sprite",
+    "css",
+    "sprite-sheet",
+    "generator",
+    "emoji-generator",
+    "standard",
+    "emoji-standard",
+    "utf"
+  ],
+  "author": "Tyler Whited",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/EagleLizard/codemoji/issues"
+  },
+  "homepage": "https://github.com/EagleLizard/codemoji#readme"
+}
