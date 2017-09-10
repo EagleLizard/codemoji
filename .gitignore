@@ -2,3 +2,4 @@ built
 json_data.json
 cache_meta.json
 cached_standard.html
+node_modules
