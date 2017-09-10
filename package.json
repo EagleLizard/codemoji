@@ -2,7 +2,7 @@
   "name": "codemoji",
   "version": "0.0.1",
   "description": "Fully fledged, flexible package for generating different emoji types",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,5 +26,10 @@
   "bugs": {
     "url": "https://github.com/EagleLizard/codemoji/issues"
   },
-  "homepage": "https://github.com/EagleLizard/codemoji#readme"
+  "homepage": "https://github.com/EagleLizard/codemoji#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "q": "^1.5.0",
+    "tinyreq": "^3.2.6"
+  }
 }
