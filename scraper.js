@@ -24,40 +24,10 @@ module.exports = {
 async function getEmojiData(page) {
   let bodyHandle, data;
   bodyHandle = await page.$('body');
+  console.log('Scraping document table data...');
   data = await bodyHandle.$$eval('tr .chars', pageScrape, COL_MAP);
-  // data = await bodyHandle.$$eval('tr .chars', (charsEls, COL_MAP) => {
-  //   let rows, emojiData;
-  //   rows = charsEls.map(el => el.parentElement);
-  //   emojiData = rows.map(row => {
-  //     let cols, rowData;
-  //     cols = Array.from(row.children);
-  //     rowData = cols.reduce((acc, curr, idx) => {
-  //       let colKey, imgEl;
-  //       colKey = COL_MAP[idx];
-  //       switch(colKey) {
-  //         case 'unicode':
-  //         case 'native_emoji':
-  //         case 'cldr_short_name':
-  //           acc[colKey] = curr.innerText;
-  //           break;
-  //         case 'apple':
-  //         case 'google':
-  //         case 'facebook':
-  //         case 'windows':
-  //         case 'twitter':
-  //           imgEl = curr.children[0];
-  //           acc[colKey] = (imgEl === undefined)
-  //             ? ''
-  //             : imgEl.getAttribute('src') ;
-  //       }
-  //       return acc;
-  //     }, {});
-  //     return rowData;
-  //   });
-  //   return emojiData;
-  // }, COL_MAP);
-  
-  console.log(data);
+  // console.log(data.map(val => `${val[COL_MAP[2]]} - ${val[COL_MAP[14]]}`).join(', '));
+  console.log(data.map(val => val[COL_MAP[2]]).join(' '));
 }
 
 function pageScrape(charsEls, COL_MAP) {
