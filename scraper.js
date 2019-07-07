@@ -26,8 +26,7 @@ async function getEmojiData(page) {
   bodyHandle = await page.$('body');
   console.log('Scraping document table data...');
   data = await bodyHandle.$$eval('tr .chars', pageScrape, COL_MAP);
-  // console.log(data.map(val => `${val[COL_MAP[2]]} - ${val[COL_MAP[14]]}`).join(', '));
-  console.log(data.map(val => val[COL_MAP[2]]).join(' '));
+  return data;
 }
 
 function pageScrape(charsEls, COL_MAP) {
