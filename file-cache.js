@@ -2,11 +2,12 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const lstat = promisify(fs.lstat);
 const mkdir = promisify(fs.mkdir);
 const unlink = promisify(fs.unlink);
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
+
+const { exists } = require('./files');
 
 const CACHE_DIR = path.resolve(__dirname, '_cache');
 
@@ -45,17 +46,4 @@ async function read(fileName) {
     return null;
   }
   return await readFile(filePath);
-}
-
-async function exists(filePath) {
-  let stats;
-  try {
-    stats = await lstat(filePath, fs.constants.F_OK);
-  } catch(e) {
-    if(e.code === 'ENOENT') {
-      return false;
-    }
-    throw e;
-  }
-  return stats;
 }

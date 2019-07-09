@@ -4,3 +4,4 @@ package-lock.json
 node_modules
 cached__*
 _cache
+_assets

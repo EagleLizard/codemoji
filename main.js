@@ -2,6 +2,7 @@
 const stdPage = require('./stdPage');
 const scraper = require('./scraper');
 const fileCache = require('./file-cache');
+const emojiAssets = require('./emoji-assets');
 
 const EMOJI_JSON = 'emojis.json';
 
@@ -27,5 +28,5 @@ async function scrape() {
   } else {
     emojiData = JSON.parse(emojiData.toString());
   }
-  console.log(emojiData.map(val => val.native_emoji).join(' '));
+  await emojiAssets.build(emojiData);
 }
