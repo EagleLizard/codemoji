@@ -4,6 +4,7 @@ const fs = require('fs');
 const { promisify } = require('util');
 const mkdir = promisify(fs.mkdir);
 const writeFile = promisify(fs.writeFile);
+const unlink = promisify(fs.unlink);
 
 const rimraf = promisify(require('rimraf'));
 
@@ -11,7 +12,10 @@ const { exists } = require('./files');
 const EMOJI_CONSTANTS = require('./emoji-constants');
 const COL_MAP = EMOJI_CONSTANTS.scraper.COL_MAP;
 
-const ASSET_DIR = path.resolve(__dirname, '_assets');
+const ASSER_DIR = '_assets';
+const ASSET_PATH = path.resolve(__dirname, ASSER_DIR);
+const EMOJI_META = 'emoji-meta.json';
+const EMOJI_META_PATH = path.resolve(__dirname, EMOJI_META);
 const FILE_PROPERTIES = [
   COL_MAP[3],
   COL_MAP[4],
@@ -25,33 +29,50 @@ module.exports = {
 };
 
 async function build(emojiDataArr) {
-  let assetDirExists, filePromises;
-  assetDirExists = await exists(ASSET_DIR);
+  let assetDirExists, assetMetaExists, filePromises, emojiMeta;
+  [ assetDirExists, assetMetaExists ] = await Promise.all([
+    exists(ASSET_PATH),
+    exists(EMOJI_META_PATH),
+  ]);
   if(assetDirExists) {
-    await rimraf(ASSET_DIR);
-  } else {
-    await mkdir(ASSET_DIR);
+    await rimraf(ASSET_PATH);
   }
+  if(assetMetaExists) {
+    await unlink(EMOJI_META_PATH);
+  }
+  await mkdir(ASSET_PATH);
   filePromises = emojiDataArr.map(writeEmojiImageData);
-  await Promise.all(filePromises);
+  emojiMeta = (await Promise.all(filePromises)).reduce((acc, curr) => {
+    acc[curr.id] = curr;
+    return acc;
+  }, {});
+  await writeFile(EMOJI_META_PATH, JSON.stringify(emojiMeta, null, 2));
 }
 
 async function writeEmojiImageData(emojiData) {
-  let filePromises, dirPath;
+  let filePromises, dirPath, validEmojiFiles;
   filePromises = [];
-  dirPath = path.resolve(ASSET_DIR, emojiData.id);
+  validEmojiFiles = Object.keys(emojiData)
+    .filter(emojiKey => !FILE_PROPERTIES.find(prop => emojiKey === prop))
+    .reduce((acc, emojiKey) => {
+      acc[emojiKey] = emojiData[emojiKey];
+      return acc;
+    }, {});
+  dirPath = path.resolve(ASSET_PATH, emojiData.id);
   await mkdir(dirPath);
   FILE_PROPERTIES.forEach(fileProp => {
-    let srcStr, filePath, imageData, filePromise;
+    let srcStr, fileName, filePath, imageData, filePromise;
     srcStr = emojiData[fileProp];
     if(srcStr) {
       imageData = getImageData(srcStr);
-      filePath = path.resolve(dirPath, `${fileProp}.${imageData.fileExtension}`);
+      fileName = `${fileProp}.${imageData.fileExtension}`;
+      filePath = path.resolve(dirPath, fileName);
       filePromise = writeImageData(filePath, imageData.data, imageData.encoding);
       filePromises.push(filePromise);
+      validEmojiFiles[fileProp] = path.resolve(ASSER_DIR, fileName);
     }
   });
-  return Promise.all(filePromises);
+  return Promise.all(filePromises).then(() => validEmojiFiles);
 }
 
 async function writeImageData(filePath, dataStr, encoding) {
