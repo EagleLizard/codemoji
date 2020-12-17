@@ -96,7 +96,7 @@ async function getPageContent() {
 }
 
 async function closeBrowser() {
-  if(page) {
+  if(page && !page.isClosed()) {
     await page.close();
   }
   if(browser) {
